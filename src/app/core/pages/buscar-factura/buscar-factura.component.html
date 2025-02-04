@@ -1,0 +1,77 @@
+<app-breadcrumbs [name]="'Búsqueda de facturas'" [namePage]="'Búsqueda de facturas'"
+  [description]="'Realiza la búsqueda de tus facturas.'">
+</app-breadcrumbs>
+
+<div style="padding-top: 0%;" class="wrapper wrapper-content animated fadeIn mx-2 mt-3" id="ibox">
+  <div class="ibox-content">
+    <div class="row align-items-center mx-1 mt-3 mb-3">
+      <label class="col-md-2 col-form-label text-end">Buscar:</label>
+      <div class="col-md-3">
+        <label class="me-2">
+          <input type="radio" name="tipoBusqueda" value="cliente" [(ngModel)]="selectedTipoBusqueda">
+          Cliente
+        </label>
+        <label>
+          <input type="radio" name="tipoBusqueda" value="numeroFactura" [(ngModel)]="selectedTipoBusqueda">
+          Número de Factura
+        </label>
+      </div>
+
+      <div class="col-md-4">
+        <div *ngIf="selectedTipoBusqueda === 'cliente'">
+          <label>Cliente:</label>
+          <select class="form-select" [(ngModel)]="selectedClienteId">
+            <option selected value="">Seleccione un cliente</option>
+            <option *ngFor="let cliente of clientes" [value]="cliente.id">{{ cliente.razonSocial }}</option>
+          </select>
+        </div>
+
+        <div *ngIf="selectedTipoBusqueda === 'numeroFactura'">
+          <label>Número de Factura:</label>
+          <input class="form-control" type="number" [(ngModel)]="numeroFactura">
+        </div>
+      </div>
+
+      <div class="col-md-2 text-end">
+        <button class="btn btn-primary btn-sm rounded text-white" (click)="buscar()">
+          <i class="fa-solid fa-magnifying-glass"></i> Buscar
+        </button>
+      </div>
+    </div>
+
+
+<div style="padding-top: 0%;" class="wrapper wrapper-content animated fadeIn mx-2 mt-3">
+  <p *ngIf="mensaje" class="mensaje">{{ mensaje }}</p>
+  <div class="container">
+
+    <table class="footable3 table table-striped" data-page-size="10"*ngIf="facturas.length > 0">
+      <thead>
+        <tr>
+          <th>Número de Factura</th>
+          <th>Fecha Emisión</th>
+          <th>Total Facturado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let factura of facturas">
+          <td>{{ factura.numeroFactura }}</td>
+          <td>{{ factura.fechaEmisionFactura | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ factura.totalFactura | currency }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="10">
+            <ul class="pagination float-right"></ul>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+
+
+
+
+
+  </div>
+
+</div>
