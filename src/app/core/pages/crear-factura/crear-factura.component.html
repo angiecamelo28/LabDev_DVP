@@ -1,4 +1,4 @@
-<app-breadcrumbs [name]="'Creación de facturas'" [namePage]="'Creación de facturas'"
+<app-breadcrumbs [name]="'Facturas'" [namePage]="'Creación de facturas'"
   [description]="'Realiza la creación de tus facturas.'">
 </app-breadcrumbs>
 
@@ -6,15 +6,30 @@
 
 <div style="padding-top: 0%;" class="wrapper wrapper-content animated fadeIn mx-2 mt-3" id="ibox">
   <div class="ibox-content">
-    <label>Cliente:</label>
-    <select  class="form-select" [(ngModel)]="factura.idCliente">
-      <option *ngFor="let cliente of clientes" [value]="cliente.id">{{ cliente.razonSocial }}</option>
-    </select>
 
-    <label>Número de Factura:</label>
-    <input class="form-control" type="number" [(ngModel)]="factura.numeroFactura">
+    <button class="btn btn-primary btn-sm rounded text-white mt-3 mb-3" (click)="nuevo()"><i class="fa-solid fa-eraser"></i>Nuevo</button>
 
-    <button class="btn btn-primary btn-sm rounded text-white mt-3" (click)="agregarProducto()">Agregar Producto</button>
+
+    <p>Ingresa la información solicitada para la creación de la factura:</p>
+    <div class="row mb-2">
+      <label class="col-2 ">
+        Cliente
+      </label>
+      <div class="col-4">
+        <select  class="form-select" [(ngModel)]="factura.idCliente">
+          <option selected value="0">Selecciona un cliente</option>
+          <option *ngFor="let cliente of clientes" [value]="cliente.id">{{ cliente.razonSocial }}</option>
+        </select>
+      </div>
+      <label class="col-2 ">
+        Número de Factura
+      </label>
+      <div class="col-4">
+        <input class="form-control" type="number" [(ngModel)]="factura.numeroFactura">
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-sm rounded text-white mt-3 mb-3" (click)="agregarProducto()"><i class="fa-solid fa-plus"></i> Agregar Producto</button>
 
     <table class="footable3 table table-striped" data-page-size="10">
       <thead>
@@ -29,12 +44,13 @@
       <tbody>
         <tr *ngFor="let detalle of factura.detalles">
           <td>
-            <select class="form-select" [(ngModel)]="detalle.idProducto">
+            <select class="form-select" [(ngModel)]="detalle.idProducto" (change)="actualizarProducto(detalle)">
+              <option selected value="0">Selecciona un producto</option>
               <option *ngFor="let producto of productos" [value]="producto.id">{{ producto.nombreProducto }}</option>
             </select>
           </td>
           <td>{{ detalle.producto?.precioUnitario }}</td>
-          <td><input type="number" [(ngModel)]="detalle.cantidadDeProducto"></td>
+          <td><input class="form-control" type="number" [(ngModel)]="detalle.cantidadDeProducto"></td>
           <td><img [src]="'data:image/png;base64,' + detalle.producto?.imagenBase64"></td>
           <td>{{ detalle.subtotalProducto }}</td>
         </tr>
@@ -56,7 +72,7 @@
 
     </table>
 
-    <button class="btn btn-primary btn-sm rounded text-white" (click)="guardarFactura()">Guardar</button>
+    <button class="btn btn-primary btn-sm rounded text-white" (click)="guardarFactura()"><i class="fa-solid fa-floppy-disk"></i>Guardar</button>
   </div>
 
 </div>

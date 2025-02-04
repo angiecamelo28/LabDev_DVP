@@ -3,12 +3,12 @@
   z-index: 997;
   padding: 15px 0;
   font-family: 'Comfortaa', sans-serif;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(35, 35, 35, 0.9);
 }
 
 #header.header-scrolled,
 #header.header-inner-pages {
-  background: rgba(40, 58, 90, 0.9);
+  background: rgba(35, 35, 35, 0.9);
 }
 
 #header .logo {
@@ -57,6 +57,7 @@
   font-weight: 500;
   white-space: nowrap;
   transition: 0.3s;
+  color: white;
   text-decoration: none;
 }
 
@@ -101,7 +102,7 @@
   font-size: 14px;
   text-transform: none;
   font-weight: 500;
-  color: black;
+  color: white;
 }
 
 .navbar .dropdown ul a i {
@@ -211,7 +212,7 @@
 .navbar-mobile a {
   padding: 10px 20px;
   font-size: 15px;
-  color: black;
+  color: white;
 }
 
 .navbar-mobile .getstarted,

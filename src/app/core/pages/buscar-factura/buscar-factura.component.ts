@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ClienteService } from 'src/app/services/cliente.service';
 import { FacturaService } from 'src/app/services/factura.service';
 import { Factura } from '../../models/factura.model';
+import { AlertService } from 'src/app/services/alert.service';
 
 declare var $: any;
 declare var jQuery: any;
@@ -14,12 +15,12 @@ declare var jQuery: any;
 export class BuscarFacturaComponent implements OnInit {
   clientes: any[] = [];
   facturas: Factura[] = [];
-  selectedTipoBusqueda: string = 'cliente';
-  selectedClienteId: number | null = null;
+  selectedTipoBusqueda: 'cliente' | 'numeroFactura' = 'cliente';
+  selectedClienteId: number | null = 0;
   numeroFactura: number | null = null;
   mensaje: string = '';
 
-  constructor(private facturaService: FacturaService, private clienteService: ClienteService) {}
+  constructor(private facturaService: FacturaService, private clienteService: ClienteService,private alertService: AlertService) {}
 
   ngOnInit(): void {
     this.obtenerClientes();
@@ -29,9 +30,12 @@ export class BuscarFacturaComponent implements OnInit {
     this.clienteService.obtenerClientes().subscribe(
       (clientes) => {
         this.clientes = clientes;
+        if(this.clientes.length == 0){
+          this.alertService.warning('No hay clientes registrados');
+        }
       },
       (error) => {
-        console.error('Error al obtener clientes', error);
+        this.alertService.error('Error al obtener clientes', error);
       }
     );
   }
@@ -54,10 +58,11 @@ export class BuscarFacturaComponent implements OnInit {
           });
           if (facturas.length == 0) {
             this.mensaje = 'No se encontraron facturas para este cliente.';
+            this.alertService.warning('No se encontraron facturas para este cliente');
           }
         },
         (error) => {
-          console.error('Error al obtener facturas', error);
+          this.alertService.error('Error al obtener las facturas', error);
           this.mensaje = 'Error al obtener las facturas.';
         }
       );
@@ -66,15 +71,28 @@ export class BuscarFacturaComponent implements OnInit {
         (factura) => {
           this.facturas = factura ? [factura] : [];
           if (!factura) {
+            this.alertService.warning('No se encontró ninguna factura con este número');
             this.mensaje = 'No se encontró ninguna factura con este número.';
           }
         },
         (error) => {
-          console.error('Error al buscar factura', error);
           this.mensaje = 'No se encontró la factura.';
+          this.alertService.error('Error al buscar factura', error);
         }
       );
     }
   }
+
+  limpiar(): void {
+    this.selectedTipoBusqueda = 'cliente';
+    this.selectedClienteId = 0;
+    this.numeroFactura = null;
+    this.facturas = [];
+    this.mensaje = '';
+    setTimeout(() => {
+      $('select').val('').trigger('change');
+    }, 10);
+  }
+
 }
 

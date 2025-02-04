@@ -6,6 +6,8 @@ import { Cliente } from '../../models/cliente.model';
 import { Factura } from '../../models/factura.model';
 import { Producto } from '../../models/producto.model';
 import { DetallesFactura } from '../../models/detallesFactura.model';
+import { AlertService } from 'src/app/services/alert.service';
+import { response } from 'express';
 
 declare var $: any;
 declare var jQuery: any;
@@ -20,7 +22,7 @@ export class CrearFacturaComponent implements OnInit {
   factura: Factura = {
     id: 0,
     fechaEmisionFactura: new Date(),
-    idCliente: undefined,
+    idCliente: 0,
     cliente: undefined,
     numeroFactura: undefined,
     numeroTotalArticulos: 0,
@@ -33,7 +35,8 @@ export class CrearFacturaComponent implements OnInit {
   constructor(
     private clienteService: ClienteService,
     private productoService: ProductoService,
-    private facturaService: FacturaService
+    private facturaService: FacturaService,
+    private alertService: AlertService
   ) {}
 
   ngOnInit(): void {
@@ -65,7 +68,7 @@ export class CrearFacturaComponent implements OnInit {
     this.factura.detalles.push({
       id: 0,
       idFactura: this.factura.id,
-      idProducto: undefined,
+      idProducto: 0,
       producto: undefined,
       cantidadDeProducto: 1,
       precioUnitarioProducto: 0,
@@ -85,15 +88,36 @@ export class CrearFacturaComponent implements OnInit {
 
 
   guardarFactura(): void {
-    this.facturaService.crearFactura(this.factura).subscribe(() => {
-      alert('Factura guardada exitosamente');
-      this.factura = { ...this.factura, detalles: [] };
+    if (this.factura.detalles.length === 0) {
+      this.alertService.warning('Debes agregar al menos un producto a la factura.');
+      return;
+    }
+    const facturaPayload = {
+      ...this.factura,
+      idCliente: Number(this.factura.idCliente),
+      detalles: this.factura.detalles.map(detalle => ({
+        ...detalle,
+        idFactura: 0,
+        idProducto: Number(detalle.idProducto),
+        producto: undefined
+      }))
+    };
+    this.facturaService.crearFactura(facturaPayload).subscribe({
+      next: (response) => {
+        this.alertService.success(`${response.mensaje} Id: ${response.facturaId}`);
+        this.nuevo();
+      },
+      error: (error) => {
+        console.error('Error al crear la factura:', error);
+        this.alertService.error('Hubo un error al crear la factura. Por favor, inténtalo de nuevo.');
+      }
     });
   }
 
 
   actualizarProducto(detalle: DetallesFactura) {
-    const productoSeleccionado = this.productos.find(p => p.id === detalle.idProducto);
+    const idProducto = Number(detalle.idProducto);
+    const productoSeleccionado = this.productos.find(p => p.id === idProducto);
     if (productoSeleccionado) {
       detalle.producto = productoSeleccionado;
       detalle.precioUnitarioProducto = productoSeleccionado.precioUnitario;
@@ -103,8 +127,29 @@ export class CrearFacturaComponent implements OnInit {
   }
 
 
+
   eliminarProducto(detalle: DetallesFactura) {
     this.factura.detalles = this.factura.detalles.filter(d => d !== detalle);
     this.calcularTotales();
   }
+
+  nuevo(): void {
+    this.factura = {
+      id: 0,
+      fechaEmisionFactura: new Date(),
+      idCliente: undefined,
+      cliente: undefined,
+      numeroFactura: undefined,
+      numeroTotalArticulos: 0,
+      subTotalFacturas: 0,
+      totalImpuestos: 0,
+      totalFactura: 0,
+      detalles: []
+    };
+
+    setTimeout(() => {
+      $('select').val('').trigger('change');
+    }, 10);
+  }
+
 }

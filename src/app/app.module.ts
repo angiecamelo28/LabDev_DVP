@@ -16,6 +16,8 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideToastr } from 'ngx-toastr';
 import { CrearFacturaComponent } from './core/pages/crear-factura/crear-factura.component';
 import { BuscarFacturaComponent } from './core/pages/buscar-factura/buscar-factura.component';
+import { LoaderInterceptor } from './interceptors/loader.interceptor';
+import { NgxUiLoaderModule } from 'ngx-ui-loader';
 
 @NgModule({
   declarations: [
@@ -36,6 +38,7 @@ import { BuscarFacturaComponent } from './core/pages/buscar-factura/buscar-factu
     NoopAnimationsModule,
     ReactiveFormsModule,
     NgxPaginationModule,
+    NgxUiLoaderModule,
     ToastrModule.forRoot(),
   ],
   exports: [

@@ -1,50 +1,58 @@
-<app-breadcrumbs [name]="'Búsqueda de facturas'" [namePage]="'Búsqueda de facturas'"
+<app-breadcrumbs [name]="'Facturas'" [namePage]="'Búsqueda de facturas'"
   [description]="'Realiza la búsqueda de tus facturas.'">
 </app-breadcrumbs>
 
 <div style="padding-top: 0%;" class="wrapper wrapper-content animated fadeIn mx-2 mt-3" id="ibox">
   <div class="ibox-content">
-    <div class="row align-items-center mx-1 mt-3 mb-3">
-      <label class="col-md-2 col-form-label text-end">Buscar:</label>
-      <div class="col-md-3">
-        <label class="me-2">
-          <input type="radio" name="tipoBusqueda" value="cliente" [(ngModel)]="selectedTipoBusqueda">
-          Cliente
-        </label>
-        <label>
-          <input type="radio" name="tipoBusqueda" value="numeroFactura" [(ngModel)]="selectedTipoBusqueda">
-          Número de Factura
-        </label>
+
+    <p>Ingresa la información solicitada para la búsqueda de la factura:</p>
+    <div class="row mb-2">
+      <label class="col-2 ">
+        Buscar:
+      </label>
+      <div class="col-4">
+        <div class="d-flex gap-3">
+          <label class="me-2">
+            <input type="radio" name="tipoBusqueda" value="cliente" [(ngModel)]="selectedTipoBusqueda">
+            Cliente
+          </label>
+          <label>
+            <input type="radio" name="tipoBusqueda" value="numeroFactura" [(ngModel)]="selectedTipoBusqueda">
+            Número de Factura
+          </label>
+        </div>
       </div>
 
-      <div class="col-md-4">
-        <div *ngIf="selectedTipoBusqueda === 'cliente'">
-          <label>Cliente:</label>
+      <ng-container *ngIf="selectedTipoBusqueda === 'cliente'">
+        <label class="col-2 " >Cliente:</label>
+        <div class="col-4" *ngIf="selectedTipoBusqueda === 'cliente'">
           <select class="form-select" [(ngModel)]="selectedClienteId">
-            <option selected value="">Seleccione un cliente</option>
+            <option selected value="0">Selecciona un cliente</option>
             <option *ngFor="let cliente of clientes" [value]="cliente.id">{{ cliente.razonSocial }}</option>
           </select>
         </div>
+      </ng-container>
 
-        <div *ngIf="selectedTipoBusqueda === 'numeroFactura'">
-          <label>Número de Factura:</label>
+      <ng-container *ngIf="selectedTipoBusqueda === 'numeroFactura'">
+        <label class="col-2 " >Número de Factura:</label>
+        <div class="col-4" >
           <input class="form-control" type="number" [(ngModel)]="numeroFactura">
         </div>
-      </div>
+      </ng-container>
 
-      <div class="col-md-2 text-end">
-        <button class="btn btn-primary btn-sm rounded text-white" (click)="buscar()">
-          <i class="fa-solid fa-magnifying-glass"></i> Buscar
-        </button>
-      </div>
+    </div>
+    <div class="d-flex gap-2 mt-3 mb-2">
+      <button class="btn btn-primary btn-sm rounded text-white" (click)="buscar()">
+        <i class="fa-solid fa-magnifying-glass"></i> Buscar
+      </button>
+
+      <button class="btn btn-secondary btn-sm rounded text-white" (click)="limpiar()">
+        <i class="fa-solid fa-eraser"></i> Limpiar
+      </button>
     </div>
 
-
-<div style="padding-top: 0%;" class="wrapper wrapper-content animated fadeIn mx-2 mt-3">
-  <p *ngIf="mensaje" class="mensaje">{{ mensaje }}</p>
-  <div class="container">
-
-    <table class="footable3 table table-striped" data-page-size="10"*ngIf="facturas.length > 0">
+    <p *ngIf="mensaje" class="mensaje">{{ mensaje }}</p>
+    <table *ngIf="facturas.length > 0" class="footable3 table table-striped" data-page-size="10">
       <thead>
         <tr>
           <th>Número de Factura</th>
@@ -59,7 +67,7 @@
           <td>{{ factura.totalFactura | currency }}</td>
         </tr>
       </tbody>
-      <tfoot>
+      <tfoot class="table-light">
         <tr>
           <td colspan="10">
             <ul class="pagination float-right"></ul>
@@ -68,10 +76,4 @@
       </tfoot>
     </table>
 
-
-
-
-
   </div>
-
-</div>
